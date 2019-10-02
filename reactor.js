@@ -1,6 +1,12 @@
 const fs = require('fs');
 const exec = require('child_process').exec;
+
 require('dotenv').config()
+const express = require('express');
+const bodyParser = require('body-parser');
+const request = require('request');
+const app = express();
+const port = process.env.PORT;
 
 const { createEventAdapter } = require('@slack/events-api');
 const slackSigningSecret = process.env.SLACK_SIGNING_SECRET;
