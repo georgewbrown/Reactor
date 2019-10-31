@@ -1,19 +1,16 @@
+require('dotenv').config()
 const fs = require('fs');
 const exec = require('child_process').exec;
-
-require('dotenv').config()
 const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const app = express();
-const port = process.env.PORT;
 
 const { createEventAdapter } = require('@slack/events-api');
 const slackSigningSecret = process.env.SLACK_SIGNING_SECRET;
 const slackEvents = createEventAdapter(slackSigningSecret, {
     waitForResponse: true,
 });
-const port = process.env.PORT;
 
 const os = require('os');
 const platform = os.platform();
@@ -44,7 +41,7 @@ slackEvents.on('reaction_added', (event, respond, error) => {
             } else {
                 outputDevice = '';
             }
-            respond();
+            respond.status(200).send();
         };
     };
 
@@ -59,8 +56,8 @@ slackEvents.on('reaction_added', (event, respond, error) => {
                 console.log(`playing: ${emoticonMp3}`);
             }
         });    
-        return respond();
-        } else {
+        respond.status(200).send();
+    } else {
             return console.log(error.name);
         }
 });
@@ -69,8 +66,10 @@ slackEvents.on('error', (error) => {
     return console.log(`${error.name}: ${error}`);
 });
 
+app.listen(process.env.PORT,`Listening for events on ${process.env.PORT}` )
+
 (async (req, res) => {
-    const server = await slackEvents.start(port);
-    console.log(`Listening for events on ${server.address().port}`);
+    const server = await slackEvents.start(process.env.PORT);
+    console.log(`Listening for events on ${server.address().process.env.PORT}`);
     respond.status(200).send();
 })();
